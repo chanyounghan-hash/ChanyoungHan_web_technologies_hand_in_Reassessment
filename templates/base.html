@@ -1,7 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-
-    scale=1.0" />
-        <title>MHD To Do List</title>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, 
+        initial-scale=1.0" />
+        <title>To Do List</title>
+    </head>
+    <body>
+        <div class="todo-contaioner">
+            <h1 class="title">To Do List</h1>
+            <form id="todo-form">
+                <input type="text" id="todo-input" placeholder="What do you plan To Do?" />
+                <button type="submit" id="submit-btn">Add</button>
+            </form>
+            <ul id="todo-list">
+                <li class="todo-item">
+                    <input type="checkbox" class="item-checkbox" />
+                    <span class="item-title">Studying Hard</span>
+                    <button class="edit-btn">Edit</button>
+                    <button class="delete-btn">Delete</button>
+                </li>
+            </ul>
+        </div>
+    </body>
+    
 </html>
