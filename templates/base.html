@@ -13,15 +13,18 @@
                 <input type="text" id="todo-input" placeholder="What do you plan To Do?" />
                 <button type="submit" id="submit-btn">Add</button>
             </form>
-            <ul id="todo-list">
-                <li class="todo-item">
-                    <input type="checkbox" class="item-checkbox" />
-                    <span class="item-title">Studying Hard</span>
-                    <button class="edit-btn">Edit</button>
-                    <button class="delete-btn">Delete</button>
-                </li>
-            </ul>
+            <ul id="todo-list"></ul>
         </div>
-    </body>
-    
+        
+        <template id="todo-template">
+            <li class="todo-item">
+                <input type="checkbox" class="item-checkbox" />
+                <span class="item-title"></span>
+                <button class="edit-btn">Edit</button>
+                <button class="delete-btn">Delete</button>
+            </li>
+        </template>
+
+        <script src="index.js"></script>
+    </body> 
 </html>
