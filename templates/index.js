@@ -5,13 +5,14 @@ const todoTemplate=document.getElementById('todo-template');
 
 const handleFormSubmit=(event)=>{
     event.preventDefault();
-    const inputValue=todoInput.ariaValueMax.trim();
+    const inputValue=todoInput.value.trim();
     if (inputValue==='') return;
 
     const todoItem=
-    todoTemplate.contentEditable.cloneNode(true).querySelector('.todo-item');
+    todoTemplate.content.cloneNode(true).querySelector('.todo-item');
     todoItem.querySelector('.item-title').textContent=inputValue;
     todoList.appendChild(todoItem);
+    
     todoInput.value='';
 };
 
