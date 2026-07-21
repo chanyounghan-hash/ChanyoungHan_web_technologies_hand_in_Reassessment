@@ -11,32 +11,39 @@ const getTodos = ()=>{
 
 const saveTodoItem=(todoItem)=>{
     const todoData={
+        id:todoItem.getAttribute('id'),
         title: todoItem.querySelector('.item-title').textContent,
+        isCompleted:todoItem.querySelector('.item-checkbox').checked
     };
+
     const todos=getTodos().concat(todoData);
 
     localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
 };
 
-const createTodoItem=(itemTitle)=>{
+const createTodoItem=(todo)=>{
     const todoItem = todoTemplate.content
     .cloneNode(true)
     .querySelector('.todo-item');
 
-    todoItem.querySelector('.item-title').textContent=itemTitle;
+    // extracts title form todo
+    todoItem.querySelector('.item-title').textContent=todo.title;
+
+    todoItem.querySelector('.item-checkbox').checked=todo.isCompleted;
+    todoItem.setAttribute('id',todo.id);
 
     return todoItem;
 };
 
-const addTodoItem=(itemTitle)=>{
-    const todoItem=createTodoItem(itemTitle);
+const addTodoItem=(todo)=>{
+    const todoItem=createTodoItem(todo);
 
     todoList.appendChild(todoItem);
     return todoItem;
 };
 
 const loadTodoItem=()=>{
-    getTodos().forEach((todo)=>addTodoItem(todo.title));
+    getTodos().forEach((todo)=>addTodoItem(todo));
 };
 
 const clearTodoInput=()=>{
@@ -50,7 +57,14 @@ const handleFormSubmit=(event)=>{
 
     if (inputValue==='') return;
 
-    saveTodoItem(addTodoItem(inputValue));
+    // A ID to prevent errors caused by duplicate names
+    const newTodo={
+        id:Date.now(),
+        title:inputValue,
+        isCompleted:false,
+    };
+
+    saveTodoItem(addTodoItem(newTodo));
     clearTodoInput();
 };
 
