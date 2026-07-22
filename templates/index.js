@@ -26,9 +26,8 @@ const createTodoItem=(todo)=>{
     .cloneNode(true)
     .querySelector('.todo-item');
 
-    // extracts title form todo
+    // extracts the title from the todo object
     todoItem.querySelector('.item-title').textContent=todo.title;
-
     todoItem.querySelector('.item-checkbox').checked=todo.isCompleted;
     todoItem.setAttribute('id',todo.id);
 
@@ -37,13 +36,12 @@ const createTodoItem=(todo)=>{
 
 const addTodoItem=(todo)=>{
     const todoItem=createTodoItem(todo);
-
     todoList.appendChild(todoItem);
     return todoItem;
 };
 
 const loadTodoItem=()=>{
-    getTodos().forEach((todo)=>addTodoItem(todo));
+    getTodos().forEach((todo)=>{addTodoItem(todo)});
 };
 
 const clearTodoInput=()=>{
@@ -67,6 +65,25 @@ const handleFormSubmit=(event)=>{
     saveTodoItem(addTodoItem(newTodo));
     clearTodoInput();
 };
+
+todoList.addEventListener('change',(event)=>{
+    if (event.target.classList.contains('item-checkbox')) {
+        const checkbox=event.target;
+        const todoItem=checkbox.closest('.todo-item');
+
+        const itemId=todoItem.getAttribute('id');
+        const isChecked=checkbox.checked;
+
+        const todos=getTodos();
+
+        const targetIndex=todos.findIndex(todo=>todo.id===itemId);
+
+        if (targetIndex !== -1){
+            todos[targetIndex].isCompleted=isChecked;
+            localStorage.setItem(STORAGE_KEY,JSON.stringify(todos));
+        }
+    }
+})
 
 const initTodoApp=()=>{
     todoForm.addEventListener('submit', handleFormSubmit);
