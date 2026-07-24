@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width,
+        initial-scale=1.0" />
+        <title>To Do List</title>
+        <link rel="stylesheet" href="/css/style.css" />
+    </head>
+    <body>
+        <header>
+            <nav>
+                <ul>
+                    <li><a href="/">Todo</a></li>
+                    <li><a href="/responsive">Responsive Layouts</a></li>
+                    <li><a href="/about">About</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <div class="todo-container">
+                <h1 class="title">To Do List</h1>
+                <form id="todo-form">
+                    <label for="todo-input">New todo title</label>
+                    <input type="text" id="todo-input" maxlength="200" required placeholder="What do you plan To Do?" />
+                    <button type="submit" id="submit-btn">Add</button>
+                </form>
+
+                <p id="error-message" class="error-message"></p>
+
+                <ul id="todo-list"></ul>
+            </div>
+        </main>
+
+        <template id="todo-template">
+            <li class="todo-item">
+                <label class="item-label">
+                    <input type="checkbox" class="item-checkbox" />
+                    <span class="item-title"></span>
+                </label>
+                <button class="edit-btn">Edit</button>
+                <button class="delete-btn">Delete</button>
+            </li>
+        </template>
+
+        <script src="/js/index.js"></script>
+    </body>
+</html>

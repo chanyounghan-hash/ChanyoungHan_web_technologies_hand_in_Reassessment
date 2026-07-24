@@ -1,0 +1,199 @@
+:root {
+    --color-bg: #030303;
+    --color-surface: #111111;
+    --color-neon-green: #39ff14;
+    --color-cyan: #00fff2;
+    --glow-soft: 0 0 4px currentColor;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Courier New', Courier, monospace;
+    color: var(--color-neon-green);
+    background-color: var(--color-bg);
+}
+
+a:focus,
+button:focus,
+input:focus {
+    outline: 2px solid var(--color-cyan);
+    outline-offset: 2px;
+    box-shadow: 0 0 6px var(--color-cyan);
+}
+
+/* Navigation */
+
+nav {
+    background-color: var(--color-bg);
+    border-bottom: 2px solid var(--color-neon-green);
+    padding: 0.75rem 1rem;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+}
+
+nav a {
+    color: var(--color-neon-green);
+    text-decoration: none;
+    text-shadow: var(--glow-soft);
+    padding: 0.25rem 0.5rem;
+}
+
+nav a:hover {
+    color: var(--color-cyan);
+}
+
+main {
+    padding: 1rem;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.title,
+.about-page h1 {
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-shadow: 0 0 4px var(--color-neon-green), 0 0 10px var(--color-neon-green);
+}
+
+/* Todo page */
+
+.todo-container {
+    width: 100%;
+}
+
+#todo-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+#todo-input {
+    flex: 1 1 200px;
+    padding: 0.5rem;
+    font-size: 1rem;
+    font-family: inherit;
+    background-color: var(--color-surface);
+    color: var(--color-neon-green);
+    border: 2px solid var(--color-neon-green);
+    border-radius: 0;
+}
+
+#submit-btn {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    font-family: inherit;
+    cursor: pointer;
+    background-color: transparent;
+    color: var(--color-neon-green);
+    border: 2px solid var(--color-neon-green);
+    border-radius: 0;
+}
+
+#submit-btn:hover {
+    background-color: var(--color-neon-green);
+    color: var(--color-bg);
+}
+
+.error-message {
+    color: var(--color-cyan);
+    text-shadow: var(--glow-soft);
+    min-height: 1.25rem;
+}
+
+#todo-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.todo-item {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-neon-green);
+    box-shadow: 0 0 4px rgba(57, 255, 20, 0.4);
+}
+
+.item-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1 1 auto;
+}
+
+.item-title {
+    word-break: break-word;
+}
+
+.edit-btn,
+.delete-btn {
+    padding: 0.4rem 0.75rem;
+    font-family: inherit;
+    cursor: pointer;
+    background-color: transparent;
+    color: var(--color-neon-green);
+    border: 2px solid var(--color-neon-green);
+    border-radius: 0;
+}
+
+.edit-btn:hover,
+.delete-btn:hover {
+    background-color: var(--color-neon-green);
+    color: var(--color-bg);
+}
+
+/* About page */
+
+.about-page a {
+    color: var(--color-neon-green);
+    text-shadow: var(--glow-soft);
+}
+
+.about-page a:hover {
+    color: var(--color-cyan);
+}
+
+/* Responsive layouts page */
+
+.responsive-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    max-width: none;
+}
+
+.layout-section {
+    min-height: 150px;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-neon-green);
+    box-shadow: 0 0 4px rgba(57, 255, 20, 0.4);
+}
+
+@media (min-width: 600px) {
+    .responsive-layout {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (min-width: 900px) {
+    .responsive-layout {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+}
