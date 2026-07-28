@@ -1,143 +1,184 @@
 const express = require('express');
 const path = require('path');
-const { sequelize, Todo } = require('./models/Todo');
+const { Sequelize, DataTypes } = require('sequelize');
 
-const app = express();
+
+const app = express()
 const PORT = process.env.PORT || 3000;
-const MAX_TITLE_LENGTH = 200;
 
-app.disable('x-powered-by');
-app.use((req, res, next) => {
-    res.setHeader('X-Content-Type-Options', 'nosniff');
-    res.setHeader('X-Frame-Options', 'DENY');
-    res.setHeader('Referrer-Policy', 'no-referrer');
-    res.setHeader(
-        'Content-Security-Policy',
-        "default-src 'self'; script-src 'self'; style-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
-    );
-    next();
+const sequelize = new Sequelize({
+  dialect: 'sqlite',
+  storage: './database.sqlite',
+  logging: false
 });
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.json({ limit: '10kb' }));
 
-const getTitle = (value) => {
-    if (typeof value !== 'string') return null;
+const Todo = sequelize.define('Todo', {
+    title: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    isCompleted: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+    }
+}, { timestamps: false});
 
-    const title = value.trim();
-    if (title === '' || title.length > MAX_TITLE_LENGTH) return null;
+const Done = sequelize.define('Done', {
+    title: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    completedAt: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+    }
+}, { timestamps: false });
 
-    return title;
-};
-
-const getTodoId = (value) => {
-    const id = Number(value);
-    return Number.isInteger(id) && id > 0 ? id : null;
-};
+app.use(express.static(path.join(__dirname,'public')));
+app.use(express.json({limit:'10kb'}));
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'base.html'));
+    res.sendFile(path.join(__dirname,'public', 'base.html'));
 });
 
-app.get('/responsive', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'responsive.html'));
+app.get('/complete', (req, res) => {
+    res.sendFile(path.join(__dirname,'public', 'complete.html'));
 });
 
 app.get('/about', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'about.html'));
+    res.sendFile(path.join(__dirname,'public', 'about.html'));
 });
 
-app.get('/api/todos', async (req, res) => {
+app.get('/api/todos', async(req, res) => {
     try {
-        const todos = await Todo.findAll({ order: [['id', 'ASC']] });
+        const todos = await Todo.findAll();
         res.json(todos);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Could not load todos.' });
+        res.status(500).json({
+             error: 'Error connecting to db' 
+        });
     }
 });
 
-app.post('/api/todos', async (req, res) => {
-    const title = getTitle(req.body.title);
-
-    if (title === null) {
-        return res.status(400).json({ error: 'Title must contain between 1 and 200 characters.' });
-    }
-
+app.post('/api/todos', async(req, res) => {
     try {
-        const todo = await Todo.create({ title });
+        if (typeof req.body?.title !=='string') {
+            return res.status(400).json({ error: 'Title must be text.'});
+        }
+
+        const title = req.body.title?.trim();
+        
+        if (!title) {
+            return res.status(400).json({ error: 'Enter a title' });
+        }
+
+        if (title.length > 200) {
+            return res.status(400).json({
+                 error: 'Title cannot exceed 200 characters.' 
+            });
+        }
+
+        const todo = await Todo.create({ title: title});
+        
         res.status(201).json(todo);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Could not create todo.' });
+        res.status(500).json({ error: 'Failed to add the task' });
+    }
+});
+
+app.post('/api/todos/:id/complete', async (req, res) => {
+    try {
+        const todo = await Todo.findByPk(req.params.id);
+        if (!todo) {
+            return res.status(404).json({ error: 'Not Found'});
+        }
+
+        const done = await Done.create({ title: todo.title});
+        await todo.destroy();
+        res.status(201).json(done);
+    } catch(error) {
+        res.status(500).json({ 
+            error: 'Failed to mark the tast as complete'
+        });
     }
 });
 
 app.put('/api/todos/:id', async (req, res) => {
-    const todoId = getTodoId(req.params.id);
-
-    if (todoId === null) {
-        return res.status(400).json({ error: 'Invalid todo ID.' });
-    }
-
     try {
-        const todo = await Todo.findByPk(todoId);
-
+        const todo = await Todo.findByPk(req.params.id);
         if (!todo) {
-            return res.status(404).json({ error: 'Todo not found.' });
+            return res.status(404).json({ error: 'Not Found'});
         }
 
-        if (req.body.title !== undefined) {
-            const title = getTitle(req.body.title);
-
-            if (title === null) {
-                return res.status(400).json({ error: 'Title must contain between 1 and 200 characters.' });
-            }
-
-            todo.title = title;
+        if (typeof req.body?.title !== 'string') {
+            return res.status(400).json({ error: 'Title must be text.' });
         }
 
-        if (req.body.isCompleted !== undefined) {
-            if (typeof req.body.isCompleted !== 'boolean') {
-                return res.status(400).json({ error: 'Completed value must be true or false.' });
-            }
+        const title = req.body.title.trim();
 
-            todo.isCompleted = req.body.isCompleted;
+        if (!title) {
+            return res.status(400).json({ error: 'Enter a title' });
         }
 
+        if (title.length > 200) {
+            return res.status(400).json({ 
+                error: 'Title cannot exceed 200 characters.' 
+            });
+        }
+
+        todo.title = title;
         await todo.save();
         res.json(todo);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Could not update todo.' });
+        res.status(500).json({ error: 'Failed to edit'});
     }
 });
 
 app.delete('/api/todos/:id', async (req, res) => {
-    const todoId = getTodoId(req.params.id);
-
-    if (todoId === null) {
-        return res.status(400).json({ error: 'Invalid todo ID.' });
-    }
-
     try {
-        const todo = await Todo.findByPk(todoId);
-
+        const todo = await Todo.findByPk(req.params.id);
         if (!todo) {
-            return res.status(404).json({ error: 'Todo not found.' });
+            return res.status(404).json({ error: 'Not Found'});
         }
-
         await todo.destroy();
         res.status(204).send();
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Could not delete todo.' });
+        res.status(500).json({ error: 'Failed to delete'});
+    }
+});
+
+app.get('/api/dones', async (req, res) => {
+    try {
+        const dones = await Done.findAll({
+            order:[['completedAt','DESC']]
+        });
+        res.json(dones);
+    } catch (error) {
+        res.status(500).json({
+            error: "Failed to bring completed tasks"
+        })
+    }
+});
+
+app.delete('/api/dones/:id', async (req, res) => {
+    try {
+        const done = await Done.findByPk(req.params.id);
+
+        if (!done) {
+            return res.status(404).json({ 
+                error: 'Completed task not found.' 
+            });
+        }
+
+        await done.destroy();
+        res.status(204).send();
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to delete'});
     }
 });
 
 sequelize.sync().then(() => {
     app.listen(PORT, () => {
-        console.log(`Server is running on port ${PORT}`);
+        console.log(`server is running on port ${PORT}`);
     });
-}).catch((error) => {
-    console.error('Could not start the server:', error.message);
 });

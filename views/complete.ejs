@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Completed Tasks</title>
+        <link rel="stylesheet" href="/css/style.css" />
+    </head>
+    <body>
+        <header>
+            <nav>
+                <ul>
+                    <li><a href="/">Todo</a></li>
+                    <li><a href="/complete">Completed</a></li>
+                    <li><a href="/about">About</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main class="completed-page">
+            <h1>Completed Tasks</h1>
+            <p id="complete-error" class="error-message"></p>
+
+            <% if (dones.length === 0) { %>
+                <p>There are no completed tasks yet.</p>
+            <% } else { %>
+                <ul id="done-list">
+                    <% dones.forEach((done) => { %>
+                        <li class="done-item" data-id="<%= done.id %>">
+                            <span class="done-title"><%= done.title %></span>
+                            <span class="done-time"><%= done.completedAt.toLocaleString() %></span>
+                            <button class="delete-done-btn">Delete</button>
+                        </li>
+                    <% }); %>
+                </ul>
+            <% } %>
+        </main>
+
+        <script src="/js/complete.js"></script>
+    </body>
+</html>
