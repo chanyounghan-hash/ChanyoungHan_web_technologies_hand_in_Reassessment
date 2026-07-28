@@ -3,7 +3,6 @@
     --color-surface: #111111;
     --color-neon-green: #39ff14;
     --color-cyan: #00fff2;
-    --glow-soft: 0 0 4px currentColor;
 }
 
 * {
@@ -64,7 +63,6 @@ main {
     font-size: 1.5rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    text-shadow: 0 0 4px var(--color-neon-green), 0 0 10px var(--color-neon-green);
 }
 
 /* Todo  page */
@@ -109,7 +107,6 @@ main {
 
 .error-message {
     color: var(--color-cyan);
-    text-shadow: var(--glow-soft);
     min-height: 1.25rem;
 }
 
@@ -165,7 +162,6 @@ main {
 
 .about-page a {
     color: var(--color-neon-green);
-    text-shadow: var(--glow-soft);
 }
 
 .about-page a:hover {
