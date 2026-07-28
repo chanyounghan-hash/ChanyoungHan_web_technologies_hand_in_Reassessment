@@ -1,6 +1,6 @@
 # Todo App
 
-This website is a simple Todo List application consisting of three pages: a Todo page for adding tasks, a Completed page for viewing completed tasks, and an About page containing a name and email address. To differentiate it from my previous assignment, I reduced unnecessary comments and simplified the project structure, focusing on meeting the assignment requirements.
+This website is a simple Todo List application consisting of three pages: a Todo page for adding tasks, a Completed page for viewing completed tasks, and an About page containing a name and email address.
 
 ## Features
 
@@ -12,10 +12,11 @@ This website is a simple Todo List application consisting of three pages: a Todo
 
 ```
 .
-├── models/         # Sequelize database models & connection
-├── public/         # Frontend files (HTML, CSS, JS)
-├── server.js       # Express server & REST API endpoints
-└── package.json
+├── public/         # HTML, CSS, and client-side JavaScript
+├── views/          # EJS templates
+├── server.js       # Express server, database models, and API
+├── package.json
+└── package-lock.json
 ```
 
 ## Quick Start

@@ -83,17 +83,20 @@ const handleCheckboxChange=async(checkbox)=>{
     const todoId=todoItem.getAttribute('id');
 
     try {
-        const response=await fetch(`/api/todos/${todoId}`, {
-            method:'PUT',
-            headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({isCompleted:checkbox.checked})
+        const response=await fetch(`/api/todos/${todoId}/complete`, {
+            method:'POST'
         });
 
         if (!response.ok) {
-            showError('Could not update todo.');
+            showError('Could not complete todo.');
+            checkbox.checked=false;
+            return;
         }
+
+        todoItem.remove();
     } catch (error) {
         showError('Could not reach the server.');
+        checkbox.checked=false;
     }
 };
 

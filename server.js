@@ -41,8 +41,12 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname,'public', 'base.html'));
 });
 
-app.get('/complete', (req, res) => {
-    res.sendFile(path.join(__dirname,'public', 'complete.html'));
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+app.get('/complete', async (req, res) => {
+    const dones = await Done.findAll({order: [['completedAt', 'DESC']]});
+    res.render('complete', { dones });
 });
 
 app.get('/about', (req, res) => {
