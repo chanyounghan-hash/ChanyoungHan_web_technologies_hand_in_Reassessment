@@ -37,6 +37,10 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'base.html'));
 });
 
+app.get('/text', (req, res) => {
+    res.sendFile(path.join(__dirname, 'text.html'));
+});
+
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
