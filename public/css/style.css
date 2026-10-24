@@ -201,3 +201,306 @@ main {
 .done-time {
     color: var(--color-cyan);
 }
+
+/* Text editor page */
+
+.text-page,
+.text-page * {
+    margin: 0;
+    padding: 0;
+}
+
+.text-page {
+    color-scheme: light dark;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    --elevated: #fff;
+    --link: #0066cc;
+    --text: #161616;
+    --outline: #007aff;
+    background: #fff;
+    color: var(--text);
+}
+
+@media (prefers-color-scheme: dark) {
+    .text-page {
+        --elevated: #121212;
+        --link: #58a6ff;
+        --text: #fff;
+        background: #000;
+    }
+}
+
+.text-page a {
+    color: var(--link);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1px;
+}
+
+/* keep the shared nav look despite the reset and link styles above */
+.text-page nav {
+    padding: 0.75rem 1rem;
+}
+
+.text-page nav a {
+    color: var(--color-neon-green);
+    text-decoration: none;
+    padding: 0.25rem 0.5rem;
+}
+
+.text-page nav a:hover {
+    color: var(--color-cyan);
+}
+
+.text-page article {
+    outline: none;
+    width: min(800px, calc(100% - 32px));
+    min-height: calc(100dvh - 48px);
+    margin: 24px auto;
+    padding: 24px;
+    border: 1px solid #39ff14;
+    color: #39ff14;
+    font:
+        18px / 1.5 system-ui,
+        sans-serif;
+    tab-size: 4;
+    white-space: pre-wrap;
+    text-wrap: pretty;
+    overflow-wrap: break-word;
+}
+
+.text-page article:focus-visible {
+    border-color: #39ff14;
+}
+
+.md-h1,
+.md-h2,
+.md-h3,
+.md-h4,
+.md-h5,
+.md-h6 {
+    font-weight: 700;
+}
+
+.md-h1 {
+    font-size: 2em;
+}
+
+.md-h2 {
+    font-size: 1.5em;
+}
+
+.md-h3 {
+    font-size: 1.25em;
+}
+
+.md-h4 {
+    font-size: 1.1em;
+}
+
+.md-h5 {
+    font-size: 1em;
+}
+
+.md-h6 {
+    font-size: 0.9em;
+}
+
+.md-code,
+.md-codeblock {
+    font-family: monospace;
+}
+
+.md-bold {
+    font-weight: bold;
+}
+
+.md-strike {
+    text-decoration: line-through;
+}
+
+.md-italic {
+    font-style: italic;
+}
+
+.md-url {
+    cursor: pointer;
+}
+
+#button {
+    -webkit-tap-highlight-color: transparent;
+    background: #000;
+    border: 1px solid var(--color-neon-green);
+    border-radius: 50%;
+    bottom: 15px;
+    box-shadow:
+        0 3px 5px -1px rgb(0 0 0 / 20%),
+        0 6px 10px rgb(0 0 0 / 14%),
+        0 1px 18px rgb(0 0 0 / 12%);
+    color: var(--color-neon-green);
+    cursor: pointer;
+    display: grid;
+    font-weight: 600;
+    width: 46px;
+    height: 46px;
+    outline: none;
+    overflow: hidden;
+    padding: 0;
+    place-items: center;
+    position: fixed;
+    right: 15px;
+    text-decoration: none;
+    touch-action: manipulation;
+    transition: background-color 0.3s ease-out;
+    user-select: none;
+    z-index: 1;
+}
+
+@media (hover: hover) {
+    #button:hover {
+        color: var(--color-neon-green);
+        background: #0a1f06;
+        box-shadow:
+            0 5px 5px -3px rgb(0 0 0 / 20%),
+            0 8px 10px rgb(0 0 0 / 14%),
+            0 3px 14px rgb(0 0 0 / 12%);
+    }
+}
+
+#button:focus-visible {
+    outline: 2px solid var(--outline);
+    outline-offset: 2px;
+}
+
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    transform: scale(0);
+    animation: ripple 600ms linear;
+    background: rgb(57 255 20 / 40%);
+    pointer-events: none;
+}
+
+@keyframes ripple {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+#menu {
+    visibility: hidden;
+    transform: scale(0.9) translateY(20px);
+    transition: all 100ms cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
+    width: 180px;
+    position: fixed;
+    right: 16px;
+    bottom: 77px;
+    box-shadow:
+        0 19px 38px rgb(0 0 0 / 10%),
+        0 15px 12px rgb(0 0 0 / 5%);
+    background: var(--elevated);
+    backdrop-filter: blur(10px);
+    border-radius: 8px;
+    z-index: 2;
+}
+
+#menu.visible {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    visibility: visible;
+}
+
+#menu .item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: left;
+    padding: 10px 14px;
+    overflow: hidden;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    border: none;
+    touch-action: manipulation;
+    font:
+        16px / 1.5 system-ui,
+        sans-serif;
+    color: var(--text);
+}
+
+#menu .item:hover {
+    background: rgb(0 0 0 / 4%);
+}
+
+#menu .item:focus,
+#menu .item:focus-visible {
+    box-shadow: none;
+}
+
+#menu .item:focus-visible {
+    outline: 2px solid var(--outline);
+}
+
+#menu .item:first-child {
+    border-radius: 8px 8px 0 0;
+}
+
+#menu .item:last-child {
+    border-radius: 0 0 8px 8px;
+}
+
+@media (prefers-color-scheme: dark) {
+    #menu .item:hover {
+        background: #353535;
+    }
+}
+
+#notification {
+    visibility: hidden;
+    transform: translateY(-30px);
+    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    display: flex;
+    position: fixed;
+    right: 17px;
+    top: 17px;
+    background: #318b2a;
+    color: #fff;
+    border-radius: 30px;
+    font:
+        600 16px / 1 system-ui,
+        sans-serif;
+    z-index: 2;
+    padding: 10px 20px;
+}
+
+#notification.visible {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+}
+
+.icon-definitions {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+@media print {
+    .noprint {
+        display: none !important;
+    }
+
+    .text-page article {
+        min-height: 0;
+        padding: 0;
+    }
+}
