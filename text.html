@@ -9,7 +9,7 @@
   <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 
 </head>
-<body>
+<body class="text-page">
      <header class="noprint">
         <nav>
             <ul>
@@ -21,20 +21,19 @@
         </nav>
     </header>
     
-    <main>
-        <article
-        id = "editor"
-        contenteditable = "plaintext-only"
-        spellcheck = "true"
-        aria-label = "Text editor"
-        >
-        </article>
-    </main>
+    
+    <article
+        contenteditable="plaintext-only"
+        spellcheck="true"
+        autofocus
+        aria-label="Markdown text editor"
+    ></article>
+    
 
     <button
         type = "button"
-        id = "menu-button"
-        class = "no-print"
+        id = "button"
+        class = "noprint"
         aria-label = "Open Menu"
         aria-controls = "menu"
         aria-expanded = "false"
@@ -57,20 +56,90 @@
     </svg>
     </button>
 
-    <div id="menu" class="no-print" role="menu" aria-label="Editor actions">
-        <a class="item" href="/text#new" role="menuitem"
-        >
+    <div id="menu" class="noprint" role="menu" aria-label="Editor actions">
+        <a class="item" href="/text#new" role="menuitem">
+            <svg
+                aria-hidden="true"
+                focusable="false"
+                width="22"
+                height="22"
+            >
+                <use href="#icon-plus"></use>
+            </svg>
             New
         </a>
+
         <a class="item" id="share-link" href="#" role="menuitem">
+            <svg
+                aria-hidden="true"
+                focusable="false"
+                width="22"
+                height="22"
+            >
+                <use href="#icon-share"></use>
+            </svg>
             Share link
         </a>
 
         <a class="item" id="save-as-text" href="#" role="menuitem">
+            <svg
+                aria-hidden="true"
+                focusable="false"
+                width="22"
+                height="22"
+            >
+                <use href="#icon-save"></use>
+            </svg>
             Save as txt
         </a>
     </div>
-    <div id="notification" class="no-print" role="status" aria-live="polite">
-    </div>
+
+<div
+    id="notification"
+    class="noprint"
+    role="status"
+    aria-live="polite"
+></div>
+<svg class="icon-definitions" aria-hidden="true" focusable="false">
+    <symbol
+        id="icon-plus"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.25"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+    >
+        <path d="M12 5v14M5 12h14"></path>
+    </symbol>
+
+    <symbol
+        id="icon-share"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.25"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+    >
+        <path
+            d="M8 9H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1M12 14V3m-3 3 3-3 3 3"
+        ></path>
+    </symbol>
+
+    <symbol
+        id="icon-save"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.25"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+    >
+        <path
+            d="M6 4h10l4 4v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zm3 0v5h6V4m-3 13a2 2 0 1 0 0 .01"
+        ></path>
+    </symbol>
+</svg>
 </body>
-</html>                  
+</html>          
