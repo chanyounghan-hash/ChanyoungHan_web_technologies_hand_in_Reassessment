@@ -19,6 +19,7 @@ function initUI() {
     const menu = document.querySelector('#menu');
     const button = document.querySelector('#button');
     const shareLink = document.querySelector('#share-link');
+    const saveAsText = document.querySelector('#save-as-text');
 
     button.addEventListener('click', (event) => {
         if (event.clientX || event.targetTouches) ripple(event);
@@ -59,6 +60,12 @@ function initUI() {
         } catch (error) {
             notify('Could not copy link');
         }
+    });
+
+     saveAsText.addEventListener('click', (event) => {
+        event.preventDefault();
+        downloadTXT();
+        hideMenu();
     });
 }
 
@@ -594,4 +601,49 @@ function fromBase64Url(value) {
     const binary = atob(base64 + '='.repeat((4 - (base64.length % 4)) % 4));
 
     return Uint8Array.from(binary, (character) => character.charCodeAt(0));
+}
+
+async function downloadTXT() {
+    updateTitle();
+
+    await downloadFile(
+        article.textContent,
+        document.title + '.txt',
+        'text/plain'
+    );
+}
+
+async function downloadFile(content, filename, mimeType) {
+    if ('showSaveFilePicker' in window) {
+        try {
+            const extension = filename.slice(filename.lastIndexOf('.'));
+
+            const handle = await showSaveFilePicker({
+                suggestedName: filename,
+                types: [
+                    {
+                        description: mimeType,
+                        accept: { [mimeType]: [extension] },
+                    },
+                ],
+            });
+
+            const writable = await handle.createWritable();
+            await writable.write(content);
+            await writable.close();
+            return;
+        } catch (error) {
+            if (error.name === 'AbortError') return;
+        }
+    }
+
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+
+    anchor.href = url;
+    anchor.download = filename;
+    anchor.click();
+
+    URL.revokeObjectURL(url);
 }
