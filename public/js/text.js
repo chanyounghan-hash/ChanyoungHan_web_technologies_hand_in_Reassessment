@@ -3,6 +3,18 @@ initUI();
 const article = document.querySelector('article');
 const editor = new Editor(article, parseMarkdown);
 
+article.addEventListener('input', debounce(500, save));
+article.addEventListener('blur', save);
+
+addEventListener('DOMContentLoaded', load);
+addEventListener('hashchange', load);
+
+addEventListener('load', () =>
+    new MutationObserver(save).observe(article, {
+        attributeFilter: ['style']
+    })
+);
+
 function initUI() {
     const menu = document.querySelector('#menu');
     const button = document.querySelector('#button');
@@ -31,6 +43,22 @@ function initUI() {
     document.body.addEventListener('click', (event) => {
         if (event.target.closest('#menu, #button, .ripple')) return;
         hideMenu();
+    });
+    shareLink.addEventListener('click', async (event) => {
+        event.preventDefault();
+
+        if (!navigator.clipboard) {
+            alert('Your browser does not support clipboard API');
+            return;
+        }
+
+        try {
+            await navigator.clipboard.writeText(location.href);
+            notify('Link copied');
+            hideMenu();
+        } catch (error) {
+            notify('Could not copy link');
+        }
     });
 }
 
@@ -468,4 +496,102 @@ function Editor(element, highlight) {
             highlight(element);
         },
     };
+}
+
+async function load() {
+    try {
+        if (location.hash && location.hash !== '#new') {
+            await set(location.hash);
+        } else if (location.hash === '#new') {
+            article.textContent = '';
+            article.removeAttribute('style');
+            history.replaceState({}, '', location.pathname);
+        }
+    } catch (error) {
+        article.textContent = '';
+        article.removeAttribute('style');
+        history.replaceState({}, '', location.pathname);
+    }
+
+    updateTitle();
+}
+
+async function save() {
+    const hash = await get();
+
+    if (location.hash !== hash) {
+        history.replaceState({}, '', hash);
+    }
+
+    updateTitle();
+}
+
+async function set(hash) {
+    if (!hash) return;
+
+    const [content, style] = (await decompress(hash.slice(1))).split('\x00');
+
+    editor.set(content);
+
+    if (style) article.setAttribute('style', style);
+}
+
+async function get() {
+    const style = article.getAttribute('style');
+    const content = article.innerText + (style !== null ? '\x00' + style : '');
+
+    return '#' + (await compress(content));
+}
+
+function updateTitle() {
+    const match = article.innerText.match(/^\n*#(.+)\n/);
+    document.title = match?.[1] ?? 'Textarea';
+}
+
+async function compress(value) {
+    const bytes = new TextEncoder().encode(value);
+    const stream = new CompressionStream('deflate-raw');
+    const writer = stream.writable.getWriter();
+
+    writer.write(bytes);
+    writer.close();
+
+    const buffer = await new Response(stream.readable).arrayBuffer();
+
+    return toBase64Url(new Uint8Array(buffer));
+}
+
+async function decompress(base64) {
+    const bytes = fromBase64Url(base64);
+    const stream = new DecompressionStream('deflate-raw');
+    const writer = stream.writable.getWriter();
+
+    writer.write(bytes);
+    writer.close();
+
+    const buffer = await new Response(stream.readable).arrayBuffer();
+
+    return new TextDecoder().decode(buffer);
+}
+
+function toBase64Url(bytes) {
+    let binary = '';
+
+    for (let offset = 0; offset < bytes.length; offset += 0x8000) {
+        binary += String.fromCharCode(
+            ...bytes.subarray(offset, offset + 0x8000)
+        );
+    }
+
+    return btoa(binary)
+        .replaceAll('+', '-')
+        .replaceAll('/', '_')
+        .replace(/=+$/, '');
+}
+
+function fromBase64Url(value) {
+    const base64 = value.replaceAll('-', '+').replaceAll('_', '/');
+    const binary = atob(base64 + '='.repeat((4 - (base64.length % 4)) % 4));
+
+    return Uint8Array.from(binary, (character) => character.charCodeAt(0));
 }
