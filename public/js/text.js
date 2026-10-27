@@ -15,6 +15,13 @@ addEventListener('load', () =>
     })
 );
 
+addEventListener('keydown', (event) => {
+    if ((event.metaKey || event.ctrlKey) && event.code === 'KeyS') {
+        event.preventDefault();
+        downloadHTML();
+    }
+});
+
 function initUI() {
     const menu = document.querySelector('#menu');
     const button = document.querySelector('#button');
@@ -646,4 +653,31 @@ async function downloadFile(content, filename, mimeType) {
     anchor.click();
 
     URL.revokeObjectURL(url);
+}
+
+async function downloadHTML() {
+    updateTitle();
+
+    const documentCopy = document.documentElement.cloneNode(true);
+
+    documentCopy
+        .querySelectorAll('script, .noprint')
+        .forEach((element) => element.remove());
+
+    documentCopy.querySelector('article').removeAttribute('contenteditable');
+
+    const stylesheet = await fetch('/css/style.css').then((response) =>
+        response.text()
+    );
+
+    const styleElement = documentCopy.ownerDocument.createElement('style');
+    styleElement.textContent = stylesheet;
+
+    documentCopy
+        .querySelector('link[rel="stylesheet"]')
+        .replaceWith(styleElement);
+
+    const html = '<!DOCTYPE html>\n' + documentCopy.outerHTML;
+
+    await downloadFile(html, document.title + '.html', 'text/html');
 }
