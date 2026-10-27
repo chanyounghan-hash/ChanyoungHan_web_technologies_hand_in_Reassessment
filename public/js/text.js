@@ -94,10 +94,16 @@ function ripple(event) {
 function debounce(milliseconds, callback) {
     let timer;
 
-    return (...args) => {
+    const debounced = (...args) => {
         clearTimeout(timer);
         timer = setTimeout(() => callback(...args), milliseconds);
     };
+
+    debounced.cancel = () => {
+        clearTimeout(timer);
+    };
+
+    return debounced;
 }
 
 function parseMarkdown(element) {
@@ -506,6 +512,14 @@ function Editor(element, highlight) {
 
     return {
         set(content) {
+            debounceHighlight.cancel();
+            debounceRecordHistory.cancel();
+
+            history.length = 0;
+            at = -1;
+            recording = false;
+            previous = undefined;
+
             element.textContent = content;
             highlight(element);
         },
@@ -517,12 +531,12 @@ async function load() {
         if (location.hash && location.hash !== '#new') {
             await set(location.hash);
         } else if (location.hash === '#new') {
-            article.textContent = '';
+            editor.set('');
             article.removeAttribute('style');
             history.replaceState({}, '', location.pathname);
         }
     } catch (error) {
-        article.textContent = '';
+        editor.set('');
         article.removeAttribute('style');
         history.replaceState({}, '', location.pathname);
     }
