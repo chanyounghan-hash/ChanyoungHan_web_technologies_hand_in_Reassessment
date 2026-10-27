@@ -74,6 +74,7 @@ main {
 #todo-form {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     gap: 0.5rem;
     margin-bottom: 1rem;
 }
@@ -112,8 +113,10 @@ main {
 
 #todo-list {
     list-style: none;
-    padding: 0;
+    padding: 0.5rem;
     margin: 0;
+    border: 2px solid var(--color-neon-green);
+    min-height: 60vh;
 }
 
 .todo-item {
