@@ -214,24 +214,15 @@ main {
 }
 
 .text-page {
-    color-scheme: light dark;
+    color-scheme: dark;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    --elevated: #fff;
-    --link: #0066cc;
-    --text: #161616;
+    --elevated: #121212;
+    --link: #58a6ff;
+    --text: #fff;
     --outline: #007aff;
-    background: #fff;
+    background: #000;
     color: var(--text);
-}
-
-@media (prefers-color-scheme: dark) {
-    .text-page {
-        --elevated: #121212;
-        --link: #58a6ff;
-        --text: #fff;
-        background: #000;
-    }
 }
 
 .text-page a {
@@ -439,7 +430,7 @@ main {
 }
 
 #menu .item:hover {
-    background: rgb(0 0 0 / 4%);
+    background: #353535;
 }
 
 #menu .item:focus,
@@ -457,12 +448,6 @@ main {
 
 #menu .item:last-child {
     border-radius: 0 0 8px 8px;
-}
-
-@media (prefers-color-scheme: dark) {
-    #menu .item:hover {
-        background: #353535;
-    }
 }
 
 #notification {
