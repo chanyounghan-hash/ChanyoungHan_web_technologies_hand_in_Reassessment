@@ -45,8 +45,19 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 app.get('/complete', async (req, res) => {
-    const dones = await Done.findAll({ order: [['completedAt', 'DESC']] });
-    res.render('complete', { dones });
+    try {
+        const dones = await Done.findAll({
+            order: [['completedAt', 'DESC']]
+        });
+
+        res.render('complete', { dones });
+    } catch (error) {
+        console.error('Failed to load completed tasks:', error);
+
+        res.status(500).send(
+            'Could not load completed tasks. Please try again later.'
+        );
+    }
 });
 
 app.get('/about', (req, res) => {
