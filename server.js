@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const { Sequelize, DataTypes } = require('sequelize');
+const { Sequelize, DataTypes, Transaction } = require('sequelize');
 
 
 const app = express()
@@ -92,17 +92,40 @@ app.post('/api/todos', async (req, res) => {
 
 app.post('/api/todos/:id/complete', async (req, res) => {
     try {
-        const todo = await Todo.findByPk(req.params.id);
-        if (!todo) {
-            return res.status(404).json({ error: 'Not Found' });
+        const done = await sequelize.transaction(
+            { type: Transaction.TYPES.IMMEDIATE },
+            async (transaction) => {
+                const todo = await Todo.findByPk(req.params.id, {
+                    transaction
+                });
+
+                if (!todo) {
+                    return null;
+                }
+
+                const completedTodo = await Done.create(
+                    { title: todo.title },
+                    { transaction }
+                );
+
+                await todo.destroy({ transaction });
+
+                return completedTodo;
+            }
+        );
+
+        if (!done) {
+            return res.status(404).json({
+                error: 'Task not found or already completed.'
+            });
         }
 
-        const done = await Done.create({ title: todo.title });
-        await todo.destroy();
         res.status(201).json(done);
     } catch (error) {
+        console.error('Failed to complete task:', error);
+
         res.status(500).json({
-            error: 'Failed to mark the tast as complete'
+            error: 'Failed to mark the task as complete.'
         });
     }
 });

@@ -77,7 +77,10 @@ const handleFormSubmit = async (event) => {
 };
 
 const handleCheckboxChange = async (checkbox) => {
+    if (!checkbox.checked || checkbox.disabled) return;
+
     clearError();
+    checkbox.disabled = true;
 
     const todoItem = checkbox.closest('.todo-item');
     const todoId = todoItem.getAttribute('id');
@@ -97,6 +100,8 @@ const handleCheckboxChange = async (checkbox) => {
     } catch (error) {
         showError('Could not reach the server.');
         checkbox.checked = false;
+    } finally {
+        checkbox.disabled = false;
     }
 };
 
