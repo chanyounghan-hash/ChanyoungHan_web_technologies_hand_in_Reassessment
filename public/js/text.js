@@ -418,30 +418,30 @@ function Editor(element, highlight) {
 
     function doUndo(event) {
         event.preventDefault();
-        at--;
 
+        if (at <= 0) return;
+
+        at--;
         const record = history[at];
 
-        if (record) {
-            element.innerHTML = record.html;
-            restore({ ...record.position });
-        }
+        element.innerHTML = record.html;
+        restore({ ...record.position });
 
-        if (at < 0) at = 0;
+        element.dispatchEvent(new Event('input', { bubbles: true }));
     }
 
     function doRedo(event) {
         event.preventDefault();
-        at++;
 
+        if (at >= history.length - 1) return;
+
+        at++;
         const record = history[at];
 
-        if (record) {
-            element.innerHTML = record.html;
-            restore({ ...record.position });
-        }
+        element.innerHTML = record.html;
+        restore({ ...record.position });
 
-        if (at >= history.length) at--;
+        element.dispatchEvent(new Event('input', { bubbles: true }));
     }
 
     function recordHistory() {
