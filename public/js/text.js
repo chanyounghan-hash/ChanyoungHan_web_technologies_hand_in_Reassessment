@@ -286,7 +286,10 @@ function Editor(element, highlight) {
     const shouldRecord = (event) =>
         !isUndo(event) &&
         !isRedo(event) &&
-        !['Meta', 'Control', 'Alt'].includes(event.key) &&
+        !event.ctrlKey &&
+        !event.metaKey &&
+        !event.altKey &&
+        !['Meta', 'Control', 'Alt', 'Shift'].includes(event.key) &&
         !event.key.startsWith('Arrow');
 
     let recording = false;
@@ -373,6 +376,7 @@ function Editor(element, highlight) {
 
     on('keyup', (event) => {
         if (event.defaultPrevented || event.isComposing) return;
+        if (!shouldRecord(event)) return;
 
         if (previous !== toString()) debounceHighlight();
 
@@ -556,8 +560,19 @@ function Editor(element, highlight) {
         return null;
     }
 
+    function finishRecording() {
+        debounceHighlight.cancel();
+        debounceRecordHistory.cancel();
+
+        if (recording) {
+            recordHistory();
+            recording = false;
+        }
+    }
+
     function doUndo(event) {
         event.preventDefault();
+        finishRecording();
 
         if (at <= 0) return;
 
@@ -566,12 +581,14 @@ function Editor(element, highlight) {
 
         element.innerHTML = record.html;
         restore({ ...record.position });
+        previous = toString();
 
         element.dispatchEvent(new Event('input', { bubbles: true }));
     }
 
     function doRedo(event) {
         event.preventDefault();
+        finishRecording();
 
         if (at >= history.length - 1) return;
 
@@ -580,6 +597,7 @@ function Editor(element, highlight) {
 
         element.innerHTML = record.html;
         restore({ ...record.position });
+        previous = toString();
 
         element.dispatchEvent(new Event('input', { bubbles: true }));
     }
