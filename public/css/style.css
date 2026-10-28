@@ -142,6 +142,57 @@ main {
     word-break: break-word;
 }
 
+.item-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    display: inline-grid;
+    place-content: center;
+    flex: 0 0 auto;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin: 0;
+    background-color: transparent;
+    color: var(--color-bg);
+    border: 2px solid var(--color-neon-green);
+    border-radius: 0;
+    cursor: pointer;
+}
+
+.item-checkbox::before {
+    content: "";
+    width: 0.3rem;
+    height: 0.6rem;
+    border: solid currentColor;
+    border-width: 0 2px 2px 0;
+    transform: translateY(-0.1rem) rotate(45deg);
+    visibility: hidden;
+}
+
+.item-checkbox:hover:not(:disabled),
+.item-checkbox:checked {
+    background-color: var(--color-neon-green);
+}
+
+.item-checkbox:checked::before {
+    visibility: visible;
+}
+
+.item-checkbox:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+@media (forced-colors: active) {
+    .item-checkbox {
+        appearance: auto;
+        -webkit-appearance: auto;
+    }
+
+    .item-checkbox::before {
+        display: none;
+    }
+}
+
 .edit-btn,
 .delete-btn,
 .delete-done-btn {
