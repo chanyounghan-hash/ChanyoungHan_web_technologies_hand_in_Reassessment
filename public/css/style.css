@@ -337,8 +337,27 @@ main {
 
 /* Keep highlighted Markdown aligned with the line-number gutter. */
 .text-page article * {
+    font-family: inherit;
     font-size: inherit;
     line-height: inherit;
+}
+
+.text-page article.word-wrap {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.text-page #line-numbers span {
+    display: block;
+}
+
+#menu #word-wrap-toggle {
+    width: 100%;
+    background: transparent;
+}
+
+#menu #word-wrap-toggle:hover {
+    background: #353535;
 }
 
 .text-page .editor-frame:focus-within {

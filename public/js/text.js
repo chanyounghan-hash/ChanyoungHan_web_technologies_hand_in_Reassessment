@@ -3,25 +3,79 @@ initUI();
 const article = document.querySelector('article');
 const editor = new Editor(article, parseMarkdown);
 const lineNumbers = document.getElementById('line-numbers');
+const wrapToggle = document.getElementById('word-wrap-toggle');
+let wordWrap = true;
+try {
+    wordWrap = localStorage.getItem('editor-word-wrap') !== 'false';
+} catch {}
 
-function updateLineNumbers() {
-    const count = (article.innerText || '').split('\n').length;
-    const numbers = Array.from({ length: count }, (_, index) => index + 1)
-        .join('\n');
-
-    if (lineNumbers.textContent !== numbers) {
-        lineNumbers.textContent = numbers;
-    }
+function applyWordWrap() {
+    article.classList.toggle('word-wrap', wordWrap);
+    wrapToggle.setAttribute('aria-checked', String(wordWrap));
+    wrapToggle.textContent = `Word wrap: ${wordWrap ? 'On' : 'Off'}`;
+    updateLineNumbers();
 }
 
-// Also covers note loading, highlighting, and undo/redo DOM changes.
+wrapToggle.addEventListener('click', () => {
+    wordWrap = !wordWrap;
+    try {
+        localStorage.setItem('editor-word-wrap', String(wordWrap));
+    } catch {}
+    applyWordWrap();
+});
+
+function updateLineNumbers() {
+    function readLines(node) {
+        if (node.nodeType === Node.TEXT_NODE) return node.nodeValue;
+        if (node.nodeName === 'BR') {
+            return node.parentNode.childNodes.length === 1 ? '' : '\n';
+        }
+        const prefix = /^(DIV|P)$/.test(node.nodeName) && node.previousSibling ? '\n' : '';
+        return prefix + Array.from(node.childNodes, readLines).join('');
+    }
+    const lines = readLines(article).split('\n');
+    lineNumbers.style.width = `${Math.max(2, String(lines.length).length) + 2}ch`;
+    const style = getComputedStyle(article);
+    const mirror = document.createElement('div');
+    Object.assign(mirror.style, {
+        position: 'fixed',
+        left: '-100000px',
+        top: '0',
+        visibility: 'hidden',
+        pointerEvents: 'none',
+        width: `${article.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight)}px`,
+        font: style.font,
+        lineHeight: style.lineHeight,
+        letterSpacing: style.letterSpacing,
+        tabSize: style.tabSize,
+        whiteSpace: style.whiteSpace,
+        overflowWrap: style.overflowWrap
+    });
+    const measurements = lines.map((line) => {
+        const row = document.createElement('div');
+        row.textContent = line || '\u200b';
+        mirror.appendChild(row);
+        return row;
+    });
+    document.body.appendChild(mirror);
+    const numbers = measurements.map((row, index) => {
+        const number = document.createElement('span');
+        number.textContent = index + 1;
+        number.style.height = `${row.getBoundingClientRect().height}px`;
+        return number;
+    });
+    mirror.remove();
+    lineNumbers.replaceChildren(...numbers);
+}
+
 new MutationObserver(updateLineNumbers).observe(article, {
     childList: true,
     characterData: true,
     subtree: true
 });
 article.addEventListener('input', updateLineNumbers);
-updateLineNumbers();
+new ResizeObserver(updateLineNumbers).observe(article);
+applyWordWrap();
 
 article.addEventListener('input', debounce(500, save));
 article.addEventListener('blur', save);
