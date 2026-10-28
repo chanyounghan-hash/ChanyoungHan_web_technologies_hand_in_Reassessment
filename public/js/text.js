@@ -187,7 +187,7 @@ function debounce(milliseconds, callback) {
 }
 
 function parseMarkdown(element) {
-    const input = element.innerText;
+    const input = readEditorText(element);
     const fragment = document.createDocumentFragment();
 
     const matchers = [
@@ -700,7 +700,7 @@ async function set(hash) {
 
 async function get() {
     const style = article.getAttribute('style');
-    const content = article.innerText + (style !== null ? '\x00' + style : '');
+    const content = readEditorText(article) + (style !== null ? '\x00' + style : '');
 
     return '#' + (await compress(content));
 }
