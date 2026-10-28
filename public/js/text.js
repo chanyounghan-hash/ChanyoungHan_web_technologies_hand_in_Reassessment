@@ -24,16 +24,22 @@ wrapToggle.addEventListener('click', () => {
     applyWordWrap();
 });
 
-function updateLineNumbers() {
-    function readLines(node) {
-        if (node.nodeType === Node.TEXT_NODE) return node.nodeValue;
-        if (node.nodeName === 'BR') {
-            return node.parentNode.childNodes.length === 1 ? '' : '\n';
-        }
-        const prefix = /^(DIV|P)$/.test(node.nodeName) && node.previousSibling ? '\n' : '';
-        return prefix + Array.from(node.childNodes, readLines).join('');
+function readEditorText(node) {
+    if (node.nodeType === Node.TEXT_NODE) return node.nodeValue;
+    if (node.nodeName === 'BR') {
+        return node.nextSibling ? '\n' : '';
     }
-    const lines = readLines(article).split('\n');
+    const previous = node.previousSibling;
+    const followsBreak = previous && (
+        previous.nodeName === 'BR' ||
+        (previous.nodeType === Node.TEXT_NODE && previous.nodeValue.endsWith('\n'))
+    );
+    const prefix = /^(DIV|P)$/.test(node.nodeName) && previous && !followsBreak ? '\n' : '';
+    return prefix + Array.from(node.childNodes, readEditorText).join('');
+}
+
+function updateLineNumbers() {
+    const lines = readEditorText(article).split('\n');
     lineNumbers.style.width = `${Math.max(2, String(lines.length).length) + 2}ch`;
     const style = getComputedStyle(article);
     const mirror = document.createElement('div');
@@ -756,7 +762,7 @@ async function downloadTXT() {
     updateTitle();
 
     await downloadFile(
-        article.textContent,
+        readEditorText(article),
         document.title + '.txt',
         'text/plain'
     );
