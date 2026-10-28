@@ -247,19 +247,51 @@ main {
     color: var(--color-cyan);
 }
 
+.text-page .editor-frame {
+    display: flex;
+    width: min(800px, calc(100% - 32px));
+    margin: 24px auto;
+    border: 1px solid #39ff14;
+    align-items: stretch;
+}
+
+.text-page #line-numbers {
+    flex: 0 0 auto;
+    min-width: 4ch;
+    padding: 24px 12px;
+    border-right: 1px solid #333;
+    color: #888;
+    font: 16px / 1.6 "Courier New", Courier, monospace;
+    text-align: right;
+    white-space: pre;
+    user-select: none;
+    pointer-events: none;
+}
+
 .text-page article {
     outline: none;
-    width: min(800px, calc(100% - 32px));
+    flex: 1;
+    min-width: 0;
     min-height: calc(100dvh - 48px);
-    margin: 24px auto;
+    margin: 0;
     padding: 24px;
-    border: 1px solid #39ff14;
+    border: none;
     color: #39ff14;
     font: 16px / 1.6 "Courier New", Courier, monospace;
     tab-size: 4;
-    white-space: pre-wrap;
-    text-wrap: pretty;
-    overflow-wrap: break-word;
+    white-space: pre;
+    overflow-x: auto;
+    overflow-wrap: normal;
+}
+
+/* Keep highlighted Markdown aligned with the line-number gutter. */
+.text-page article * {
+    font-size: inherit;
+    line-height: inherit;
+}
+
+.text-page .editor-frame:focus-within {
+    outline: 1px solid #39ff14;
 }
 
 .text-page article:focus-visible {
@@ -481,6 +513,13 @@ main {
 }
 
 @media print {
+    .text-page .editor-frame {
+        display: block;
+        width: 100%;
+        margin: 0;
+        border: none;
+    }
+
     .noprint {
         display: none !important;
     }
@@ -488,5 +527,7 @@ main {
     .text-page article {
         min-height: 0;
         padding: 0;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
     }
 }

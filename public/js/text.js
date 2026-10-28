@@ -2,6 +2,26 @@ initUI();
 
 const article = document.querySelector('article');
 const editor = new Editor(article, parseMarkdown);
+const lineNumbers = document.getElementById('line-numbers');
+
+function updateLineNumbers() {
+    const count = (article.innerText || '').split('\n').length;
+    const numbers = Array.from({ length: count }, (_, index) => index + 1)
+        .join('\n');
+
+    if (lineNumbers.textContent !== numbers) {
+        lineNumbers.textContent = numbers;
+    }
+}
+
+// Also covers note loading, highlighting, and undo/redo DOM changes.
+new MutationObserver(updateLineNumbers).observe(article, {
+    childList: true,
+    characterData: true,
+    subtree: true
+});
+article.addEventListener('input', updateLineNumbers);
+updateLineNumbers();
 
 article.addEventListener('input', debounce(500, save));
 article.addEventListener('blur', save);
