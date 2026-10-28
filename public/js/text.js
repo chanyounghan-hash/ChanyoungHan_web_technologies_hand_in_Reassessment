@@ -222,14 +222,68 @@ function Editor(element, highlight) {
         listeners.push([type, callback]);
         element.addEventListener(type, callback);
     };
+    
+        function insertIndent() {
+        debounceHighlight.cancel();
+        debounceRecordHistory.cancel();
+
+        recordHistory();
+
+        const position = save();
+        const start = Math.min(position.start, position.end);
+        const end = Math.max(position.start, position.end);
+        const text = toString();
+        const indent = '    ';
+
+        element.textContent =
+            text.slice(0, start) +
+            indent +
+            text.slice(end);
+
+        highlight(element);
+
+        const cursor = start + indent.length;
+        restore({
+            start: cursor,
+            end: cursor,
+            direction: '->'
+        });
+
+        recordHistory();
+        recording = false;
+        previous = toString();
+
+        element.dispatchEvent(
+            new Event('input', { bubbles: true })
+        );
+    }
 
     on('keydown', (event) => {
-        if (event.defaultPrevented) return;
+        if (event.defaultPrevented || event.isComposing) return;
+
+        if (
+            event.key === 'Tab' &&
+            !event.shiftKey &&
+            !event.ctrlKey &&
+            !event.metaKey &&
+            !event.altKey
+        ) {
+            event.preventDefault();
+            insertIndent();
+            return;
+        }
 
         previous = toString();
 
-        if (isUndo(event)) doUndo(event);
-        if (isRedo(event)) doRedo(event);
+        if (isUndo(event)) {
+            doUndo(event);
+            return;
+        }
+
+        if (isRedo(event)) {
+            doRedo(event);
+            return;
+        }
 
         if (shouldRecord(event) && !recording) {
             recordHistory();
