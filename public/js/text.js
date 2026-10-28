@@ -753,6 +753,8 @@ async function downloadHTML() {
         .forEach((element) => element.remove());
 
     documentCopy.querySelector('article').removeAttribute('contenteditable');
+    const workspace = documentCopy.querySelector('.text-workspace');
+    if (workspace) workspace.replaceWith(workspace.querySelector('.editor-frame'));
 
     const stylesheet = await fetch('/css/style.css').then((response) =>
         response.text()

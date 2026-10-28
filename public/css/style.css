@@ -259,7 +259,7 @@ main {
 /* Text editor page */
 
 .text-page,
-.text-page * {
+.text-page :where(.editor-frame, .editor-frame *, #menu, #menu *, #button, #button *, #notification) {
     margin: 0;
     padding: 0;
 }
@@ -343,6 +343,54 @@ main {
 
 .text-page .editor-frame:focus-within {
     outline: 1px solid #39ff14;
+}
+
+.text-page .text-workspace {
+    display: grid;
+    grid-template-columns: minmax(220px, 1fr) minmax(0, 800px) minmax(220px, 1fr);
+    gap: 20px;
+    margin: 24px 16px;
+    align-items: start;
+}
+
+.text-page .text-workspace > .editor-frame {
+    width: 100%;
+    margin: 0;
+}
+
+.text-page .task-panel {
+    min-width: 0;
+    color: var(--color-neon-green);
+}
+
+.text-page .task-panel .title {
+    margin: 0 0 1rem;
+}
+
+.text-page .task-panel #todo-input {
+    min-width: 0;
+    width: 100%;
+}
+
+.text-page .task-panel .item-label {
+    min-width: 0;
+}
+
+@media (max-width: 1050px) {
+    .text-page .text-workspace {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .text-page .task-panel #todo-list {
+        min-height: 0;
+    }
+}
+
+@media print {
+    .text-page .text-workspace {
+        display: block;
+        margin: 0;
+    }
 }
 
 .text-page article:focus-visible {

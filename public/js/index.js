@@ -97,6 +97,7 @@ const handleCheckboxChange = async (checkbox) => {
         }
 
         todoItem.remove();
+        document.dispatchEvent(new Event('todo-completed'));
     } catch (error) {
         showError('Could not reach the server.');
         checkbox.checked = false;
