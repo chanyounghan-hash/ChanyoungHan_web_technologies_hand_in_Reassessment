@@ -266,9 +266,9 @@ function parseMarkdown(element) {
         }
     }
 
-    article.textContent = '';
-    article.appendChild(fragment);
-    article.normalize();
+    element.textContent = '';
+    element.appendChild(fragment);
+    element.normalize();
 }
 
 function Editor(element, highlight) {
@@ -821,6 +821,39 @@ async function downloadFile(content, filename, mimeType) {
     URL.revokeObjectURL(url);
 }
 
+function formatExportedMarkdown(element) {
+    parseMarkdown(element);
+
+    const rules = [
+        ['.md-bold', 2],
+        ['.md-italic', 1],
+        ['.md-strike', 2],
+        ['.md-code', 1]
+    ];
+
+    for (const [selector, length] of rules) {
+        element.querySelectorAll(selector).forEach((node) => {
+            node.textContent = node.textContent.slice(length, -length);
+        });
+    }
+
+    element
+        .querySelectorAll('.md-h1, .md-h2, .md-h3, .md-h4, .md-h5, .md-h6')
+        .forEach((node) => {
+            node.textContent = node.textContent
+                .replace(/^#{1,6}[ \t]+/, '')
+                .replace(/[ \t]+#+[ \t]*$/, '');
+        });
+
+    element.querySelectorAll('.md-codeblock').forEach((node) => {
+        const text = node.textContent;
+        const start = text.indexOf('\n') + 1;
+        const end = text.lastIndexOf('\n');
+
+        node.textContent = text.slice(start, end);
+    });
+}
+
 async function downloadHTML() {
     updateTitle();
 
@@ -830,8 +863,14 @@ async function downloadHTML() {
         .querySelectorAll('script, .noprint')
         .forEach((element) => element.remove());
 
-    documentCopy.querySelector('article').removeAttribute('contenteditable');
+    const exportedArticle = documentCopy.querySelector('article');
+
+    exportedArticle.removeAttribute('contenteditable');
+
+    formatExportedMarkdown(exportedArticle);
+    
     const workspace = documentCopy.querySelector('.text-workspace');
+    
     if (workspace) workspace.replaceWith(workspace.querySelector('.editor-frame'));
 
     const stylesheet = await fetch('/css/style.css').then((response) =>
