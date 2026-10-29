@@ -37,8 +37,8 @@ Open `http://localhost:3000` in your browser.
 
 ## Pages
 
-- `/` — Todo list page
-- `/text` — Text editor with Markdown highlighting, sharing, and export
+- `/Text editor` — Text editor with Markdown highlighting, sharing, and export
+- `/Todo list` — Todo list page
 - `/complete` — Completed tasks page
 - `/about` — About page
 
